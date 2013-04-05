@@ -1,4 +1,5 @@
 module Scan (
+	Token(..),
 	scan
 ) where
 
@@ -6,8 +7,8 @@ module Scan (
 data Token = Endfile | Error String
 	| If | Then | Else | End | Repeat | Until | Read | Write
 	| Id String | Num Int
-	| Assign | Eq | Lt | Plus | Minus | Times | Over | Lparen | Rparen | Semi
-	deriving (Show)
+	| Assign | Equal | Lt | Plus | Minus | Times | Over | Lparen | Rparen | Semi
+	deriving (Show, Eq)
 
 data State = Start | InAssign | InComment | InNum | InId
 
@@ -30,7 +31,7 @@ getToken (Start, x:rest, _)
 	| isalpha(x) = getToken (InId,  rest, [x])
 	| x == ':'   = getToken (InAssign,  rest, [x])
 	| x == '{'   = getToken (InComment, rest, [x])
-	| x == '='   = (Assign, rest)
+	| x == '='   = (Equal, rest)
 	| x == '<'   = (Lt, rest)
 	| x == '+'   = (Plus, rest)
 	| x == '-'   = (Minus, rest)
@@ -57,12 +58,12 @@ getToken (InId, x:rest, current)
 getToken (InId, text, current)
 	= (reservedLookup . Id . reverse $ current, text)
 
-getToken (_, rest, current)
-	= (Error . reverse $ current, rest)
-
 -- Alternative Error Handle
--- getToken (_, _, current)
---	= error $ "Scan Error: " ++ show (reverse current)
+--getToken (_, rest, current)
+--	= (Error . reverse $ current, rest)
+
+getToken (_, _, current)
+	= error $ "Scan Error: " ++ show (reverse current)
 
 
 reservedLookup :: Token -> Token
@@ -76,10 +77,8 @@ reservedLookup (Id "read")   = Read
 reservedLookup (Id "write")  = Write
 reservedLookup x = x
 
-
 isdigit :: Char -> Bool
 isdigit x = x >= '0' && x <= '9'
-
 
 isalpha :: Char -> Bool
 isalpha x = x >= 'a' && x <= 'z' || x >= 'A' && x <= 'Z'
