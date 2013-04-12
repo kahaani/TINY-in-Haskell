@@ -1,7 +1,5 @@
 #TINY-in-Haskell
 
-TINY Compiler in Haskell.
-
 TINY is a small language described in book [Compiler Construction](http://www.cs.sjsu.edu/~louden/cmptext/).
 An simple implementation in C was provided by the author.
 
