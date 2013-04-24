@@ -57,11 +57,11 @@ statement :: Parse Stmt
 statement = do
 	ahead <- lookaheadM
 	case ahead of
-		If -> if_stmt
+		If     -> if_stmt
 		Repeat -> repeat_stmt
-		Id _ -> assign_stmt
-		Read -> read_stmt
-		Write -> write_stmt
+		Id _   -> assign_stmt
+		Read   -> read_stmt
+		Write  -> write_stmt
 
 if_stmt :: Parse Stmt
 if_stmt = do
@@ -79,7 +79,7 @@ if_stmt = do
 		End -> do
 			matchM End
 			return $ If2K res1 res2
-		otherwise -> error "Parse Error: expect \"else\" or \"end\""
+		otherwise -> fail "Parse Error: expect \"else\" or \"end\""
 
 repeat_stmt :: Parse Stmt
 repeat_stmt = do
@@ -183,7 +183,7 @@ factor = do
 		Num _ -> do
 			res <- matchNumM
 			return $ ConstK res
-		otherwise -> error "Parse Error: expected \"(\" or number or identifier"
+		otherwise -> fail "Parse Error: expected \"(\" or number or identifier"
 
 lookahead :: [Token] -> (Token, [Token])
 lookaheadM :: Parse Token
