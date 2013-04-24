@@ -1,23 +1,24 @@
-#TINY-in-Haskell
+TINY-in-Haskell
+===============
 
 TINY is a simple language described in book [Compiler Construction](http://www.cs.sjsu.edu/~louden/cmptext/).
 An simple implementation in C was provided by the author.
 
-#Version 1: recursive-descent
+### Version 1:
 
-It's quite stupid, C style.
-I will rewrite it after learning Combinator Parsing, or some tools like [Parsec](http://legacy.cs.uu.nl/daan/parsec.html) or [Alex](http://www.haskell.org/alex/)&[Happy](http://www.haskell.org/happy/).
+Recursive-descent parser, in C style.
 
+It's quite stupid. I will rewrite it after learning Combinator Parsing, or some tools like [Parsec](http://legacy.cs.uu.nl/daan/parsec.html) or [Alex](http://www.haskell.org/alex/)&[Happy](http://www.haskell.org/happy/).
 
-#Version 2:
+### Version 2:
 
-tbd
+Recursive-descent parser, with State Monad.
 
-#Version 3:
+### Version 3:
 
-tbd
+tbd...
 
-#License
+### License
 
 This project is licensed under the [WTFPL](http://www.wtfpl.net/).
 
