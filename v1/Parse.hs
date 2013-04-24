@@ -58,7 +58,7 @@ if_stmt text = let
 	in case rest4 of
 		(Else:_)  -> (If3K result1 result2 result3, rest7 )
 		(End :_)  -> (If2K result1 result2,         rest5')
-		otherwise -> error "Parse Error: expect \"else\" of \"end\""
+		otherwise -> error "Parse Error: expect \"else\" or \"end\""
 
 repeat_stmt :: [Token] -> (Stmt, [Token])
 repeat_stmt text = let
