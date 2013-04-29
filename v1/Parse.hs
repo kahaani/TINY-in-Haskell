@@ -1,4 +1,6 @@
 module Parse (
+	Stmt(..),
+	Exp(..),
 	parse
 ) where
 

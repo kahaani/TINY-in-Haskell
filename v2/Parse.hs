@@ -1,4 +1,6 @@
 module Parse (
+	Stmt(..),
+	Exp(..),
 	parse
 ) where
 
@@ -20,17 +22,15 @@ data Exp =
 	| IdK String  --IdK Token
 	deriving (Show)
 
--- data ExpType = VoidT | IntegerT | BooleanT
-
-data Parse a = Parse {
+newtype ParseM a = ParseM {
 		runParse :: [Token] -> (a, [Token])
 	}
 
-instance Monad Parse where
-	return x = Parse $ \s -> (x,s)
-	(Parse h) >>= f = Parse $ \s-> let
+instance Monad ParseM where
+	return x = ParseM $ \s -> (x,s)
+	(ParseM h) >>= f = ParseM $ \s-> let
 			(res, newstate) = h s
-			(Parse g) = f res
+			(ParseM g) = f res
 		in g newstate
 
 
@@ -41,7 +41,7 @@ parse text = let
 		[Endfile] -> stmts
 		otherwise -> error "Parse Error: expected EOF"
 
-stmt_sequence :: Parse [Stmt]
+stmt_sequence :: ParseM [Stmt]
 stmt_sequence = do
 	stmt <- statement
 	ahead <- lookaheadM
@@ -53,7 +53,7 @@ stmt_sequence = do
 		otherwise -> do
 			return $ [stmt]
 
-statement :: Parse Stmt
+statement :: ParseM Stmt
 statement = do
 	ahead <- lookaheadM
 	case ahead of
@@ -63,7 +63,7 @@ statement = do
 		Read   -> read_stmt
 		Write  -> write_stmt
 
-if_stmt :: Parse Stmt
+if_stmt :: ParseM Stmt
 if_stmt = do
 	matchM If
 	res1 <- expression
@@ -81,7 +81,7 @@ if_stmt = do
 			return $ If2K res1 res2
 		otherwise -> fail "Parse Error: expect \"else\" or \"end\""
 
-repeat_stmt :: Parse Stmt
+repeat_stmt :: ParseM Stmt
 repeat_stmt = do
 	matchM Repeat
 	res1 <- stmt_sequence
@@ -89,31 +89,31 @@ repeat_stmt = do
 	res2 <- expression
 	return $ RepeatK res1 res2
 
-assign_stmt :: Parse Stmt
+assign_stmt :: ParseM Stmt
 assign_stmt = do
 	res1 <- matchIdM
 	matchM Assign
 	res2 <- expression
 	return $ AssignK res1 res2
 
-read_stmt :: Parse Stmt
+read_stmt :: ParseM Stmt
 read_stmt = do
 	matchM Read
 	res <- matchIdM
 	return $ ReadK res
 
-write_stmt :: Parse Stmt
+write_stmt :: ParseM Stmt
 write_stmt = do
 	matchM Write
 	res <- expression
 	return $ WriteK res
 
-expression :: Parse Exp
+expression :: ParseM Exp
 expression = do
 	res <- simple_exp
 	expression_recursive res
 
-expression_recursive :: Exp -> Parse Exp
+expression_recursive :: Exp -> ParseM Exp
 expression_recursive lh = do
 	ahead <- lookaheadM
 	case ahead of
@@ -128,12 +128,12 @@ expression_recursive lh = do
 		otherwise -> do
 			return lh
 
-simple_exp :: Parse Exp
+simple_exp :: ParseM Exp
 simple_exp = do
 	res <- term
 	simple_exp_recursive res
 
-simple_exp_recursive :: Exp -> Parse Exp
+simple_exp_recursive :: Exp -> ParseM Exp
 simple_exp_recursive lh = do
 	ahead <- lookaheadM
 	case ahead of
@@ -148,12 +148,12 @@ simple_exp_recursive lh = do
 		otherwise -> do
 			return lh
 
-term :: Parse Exp
+term :: ParseM Exp
 term = do
 	res <- factor
 	term_recursive res
 
-term_recursive :: Exp -> Parse Exp
+term_recursive :: Exp -> ParseM Exp
 term_recursive lh = do
 	ahead <- lookaheadM
 	case ahead of
@@ -168,7 +168,7 @@ term_recursive lh = do
 		otherwise -> do
 			return lh
 
-factor :: Parse Exp
+factor :: ParseM Exp
 factor = do
 	ahead <- lookaheadM
 	case ahead of
@@ -185,15 +185,15 @@ factor = do
 			return $ ConstK res
 		otherwise -> fail "Parse Error: expected \"(\" or number or identifier"
 
-lookahead :: [Token] -> (Token, [Token])
-lookaheadM :: Parse Token
-lookaheadM = Parse $ lookahead
+lookaheadM :: ParseM Token
+lookaheadM = ParseM $ lookahead
 
+lookahead :: [Token] -> (Token, [Token])
 lookahead text@(x : _) = (x, text)
 --lookahead _ = undefined
 
-matchM :: Token -> Parse ()
-matchM t = Parse $ match t
+matchM :: Token -> ParseM ()
+matchM t = ParseM $ match t
 
 match :: Token -> [Token] -> ((), [Token])
 match y (x:rest)
@@ -201,16 +201,16 @@ match y (x:rest)
 	| otherwise = error $ "Parse Error: expected " ++ show y ++ ", but got " ++ show x
 match y _ = error $ "Parse Error: expected " ++ show y
 
-matchIdM :: Parse String
-matchIdM = Parse matchId
+matchIdM :: ParseM String
+matchIdM = ParseM matchId
 
 matchId :: [Token] -> (String, [Token])
 matchId (Id name:rest) = (name, rest)
 matchId (x:rest) = error $ "Parse Error: expected identifier, but got " ++ show x
 matchId _ = error "Parse Error: expected identifier"
 
-matchNumM :: Parse Int
-matchNumM = Parse matchNum
+matchNumM :: ParseM Int
+matchNumM = ParseM matchNum
 
 matchNum :: [Token] -> (Int, [Token])
 matchNum (Num value:rest) = (value, rest)
