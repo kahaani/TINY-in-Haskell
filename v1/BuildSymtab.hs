@@ -1,9 +1,11 @@
 module BuildSymtab (
-	testSymtab,
+	Variable,
+	Location,
+	Symtab,
+	testSymtab, -- for debug
 	buildSymtab
 ) where
 
-import Control.Monad
 import qualified Data.Map as Map
 
 import Scan (Token(..))

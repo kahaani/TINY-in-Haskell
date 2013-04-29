@@ -21,8 +21,6 @@ data Exp =
 	| IdK String  --IdK Token
 	deriving (Show)
 
--- data ExpType = VoidT | IntegerT | BooleanT
-
 
 parse :: [Token] -> [Stmt]
 parse text = let
