@@ -1,8 +1,7 @@
 TINY-in-Haskell
 ===============
 
-TINY is a simple language described in book [Compiler Construction](http://www.cs.sjsu.edu/~louden/cmptext/).
-An simple implementation in C was provided by the author.
+[A brief description of this language.](aboutTINY.md)
 
 ### Version 1:
 
