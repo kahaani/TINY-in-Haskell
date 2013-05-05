@@ -44,7 +44,7 @@ bstStmt (WriteK exp)             = bstExp exp
 bstExp :: Exp -> Symtab -> Symtab
 bstExp (OpK token exp1 exp2) = bstExp exp1 >-> bstExp exp2
 bstExp (ConstK _) = id
-bstExp (IdK id)   = insert id
+bstExp (IdK iden) = insert iden
 
 insert :: Variable -> Symtab -> Symtab
 insert v st = case Map.lookup v st of
