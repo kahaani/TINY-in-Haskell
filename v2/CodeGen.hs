@@ -154,9 +154,7 @@ pc = 7
 -- foldM :: Monad m => (a -> b -> m a) -> a -> [b] -> m a
 -- mapM :: Monad m => (a -> m b) -> [a] -> m [b]
 genStmtsM :: [Stmt] -> Symtab -> StateM ()
-genStmtsM stmts symtab = do
-	mapM (\x -> genStmtM x symtab) stmts
-	return ()
+genStmtsM stmts symtab = mapM_ (\x -> genStmtM x symtab) stmts
 
 genStmtM :: Stmt -> Symtab -> StateM ()
 genStmtM (If2K exp stmts) symtab = genStmtM (If3K exp stmts []) symtab
