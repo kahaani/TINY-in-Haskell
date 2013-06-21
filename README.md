@@ -1,7 +1,7 @@
 TINY-in-Haskell
 ===============
 
-[A brief description of this language.](aboutTINY.md)
+[A brief description of TINY.](aboutTINY.md)
 
 ### Version 1:
 

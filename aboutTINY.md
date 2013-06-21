@@ -2,7 +2,7 @@ about TINY
 ==========
 
 More details in the book [Compiler Construction](http://www.cs.sjsu.edu/~louden/cmptext/).
-An simple implementation in C was provided by the author.
+An simple implementation in C was provided by the author ([here](https://github.com/Kahaani/loucomp-annotated)).
 
 ### Lexical
 
